@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Layered Architecture - E-commerce</title>
+    <style>
+        :root {
+            --font: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #ffffff;
+            color: #000000;
+            font-family: var(--font);
+        }
+
+        .diagram-wrapper {
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .diagram {
+            min-width: 1700px;
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+            font-weight: 600;
+            margin: 6px 0 16px;
+        }
+
+        svg text {
+            font-family: var(--font);
+        }
+
+        .layer-title {
+            font-size: 14px;
+            font-weight: 600;
+            fill: #000000;
+        }
+
+        .box-text {
+            font-size: 12px;
+            fill: #000000;
+        }
+
+        .box-text-white {
+            font-size: 12px;
+            fill: #ffffff;
+        }
+
+        .legend-text {
+            font-size: 11px;
+            fill: #000000;
+        }
+
+        .label-text {
+            font-size: 11px;
+            fill: #000000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="diagram-wrapper">
+        <svg class="diagram" width="1700" height="1100" viewBox="0 0 1700 1100" role="img"
+            aria-label="Layered architecture diagram">
+            <defs>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.12" />
+                </filter>
+
+                <marker id="arrow-black" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                    markerUnits="strokeWidth">
+                    <path d="M0,0 L10,4 L0,8 Z" fill="#000000" />
+                </marker>
+                <marker id="arrow-blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                    markerUnits="strokeWidth">
+                    <path d="M0,0 L10,4 L0,8 Z" fill="#2196F3" />
+                </marker>
+                <marker id="arrow-green" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                    markerUnits="strokeWidth">
+                    <path d="M0,0 L10,4 L0,8 Z" fill="#4CAF50" />
+                </marker>
+                <marker id="arrow-orange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                    markerUnits="strokeWidth">
+                    <path d="M0,0 L10,4 L0,8 Z" fill="#FF9800" />
+                </marker>
+                <marker id="arrow-purple" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                    markerUnits="strokeWidth">
+                    <path d="M0,0 L10,4 L0,8 Z" fill="#9C27B0" />
+                </marker>
+                <marker id="arrow-teal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                    markerUnits="strokeWidth">
+                    <path d="M0,0 L10,4 L0,8 Z" fill="#009688" />
+                </marker>
+            </defs>
+
+            <!-- Legend Panel -->
+            <rect x="1080" y="14" width="590" height="230" rx="4" fill="#FFF9C4" stroke="#FBC02D" />
+            <text x="1096" y="36" class="legend-text">
+                <tspan x="1096" dy="0">Domain Layer (chỉ chứa business rule) - nơi chứa logic</tspan>
+                <tspan x="1096" dy="14">nghiệp vụ cốt lõi của hệ thống: Tạo đơn hàng,</tspan>
+                <tspan x="1096" dy="14">Kiểm tra tồn kho, Thanh toán, Tính giá, Áp dụng</tspan>
+                <tspan x="1096" dy="14">giảm giá... và những logic này không phụ thuộc:</tspan>
+                <tspan x="1096" dy="14">database, RabbitMQ, Redis, framework,...</tspan>
+                <tspan x="1096" dy="18">Entities - đối tượng có định danh (ID): User, Product,</tspan>
+                <tspan x="1096" dy="14">ProductItem, Category, Payment, Address, RedisToken</tspan>
+                <tspan x="1096" dy="18">Aggregates - nhóm entity được quản lý bởi 1 root:</tspan>
+                <tspan x="1096" dy="14">OrderAggregate: Order, OrderItem; CartAggregate: Cart,</tspan>
+                <tspan x="1096" dy="14">CartItem</tspan>
+                <tspan x="1096" dy="18">Value Objects - là object không có ID: Money, Address,</tspan>
+                <tspan x="1096" dy="14">OrderItem, CartItem</tspan>
+                <tspan x="1096" dy="18">Domain Events - sự kiện nghiệp vụ xảy ra trong hệ thống:</tspan>
+                <tspan x="1096" dy="14">OrderCreated, InventoryChecked, PaymentSucceeded,</tspan>
+                <tspan x="1096" dy="14">PaymentFailed, OrderConfirmed, OrderCancelled,</tspan>
+                <tspan x="1096" dy="14">UserRegistered</tspan>
+            </text>
+
+            <!-- Layer Containers -->
+            <rect x="400" y="70" width="190" height="820" fill="#E8F4FD" stroke="#2196F3" stroke-dasharray="6 4" />
+            <rect x="620" y="70" width="190" height="820" fill="#E8F5E9" stroke="#4CAF50" stroke-dasharray="6 4" />
+            <rect x="840" y="70" width="190" height="820" fill="#FFF3E0" stroke="#FF9800" stroke-dasharray="6 4" />
+            <rect x="1060" y="70" width="190" height="820" fill="#F3E5F5" stroke="#9C27B0" stroke-dasharray="6 4" />
+            <rect x="1280" y="70" width="190" height="820" fill="#E0F2F1" stroke="#009688" stroke-dasharray="6 4" />
+
+            <!-- Layer Titles -->
+            <text x="495" y="92" class="layer-title" text-anchor="middle">Presentation Layer</text>
+            <text x="715" y="92" class="layer-title" text-anchor="middle">Application Layer (Services)</text>
+            <text x="935" y="92" class="layer-title" text-anchor="middle">Domain Layer (Business Core)</text>
+            <text x="1155" y="92" class="layer-title" text-anchor="middle">Persistence Layer (Repositories)</text>
+            <text x="1375" y="92" class="layer-title" text-anchor="middle">Infrastructure Layer</text>
+
+            <!-- Column 1: Web Client -->
+            <rect x="40" y="230" width="150" height="40" rx="6" fill="#E3F2FD" stroke="#1976D2" filter="url(#shadow)" />
+            <text x="115" y="250" class="box-text" text-anchor="middle" dominant-baseline="middle">Web Client
+                (React)</text>
+
+            <!-- Column 2: API Gateway -->
+            <rect x="220" y="230" width="150" height="40" rx="6" fill="#E1F5FE" stroke="#0288D1"
+                filter="url(#shadow)" />
+            <text x="295" y="250" class="box-text" text-anchor="middle" dominant-baseline="middle">Spring Boot
+                API</text>
+
+            <!-- Presentation Layer Boxes -->
+            <rect x="415" y="110" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="127" class="box-text" text-anchor="middle" dominant-baseline="middle">Authentication
+                Controller</text>
+
+            <rect x="415" y="156" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="173" class="box-text" text-anchor="middle" dominant-baseline="middle">User
+                Controller</text>
+
+            <rect x="415" y="202" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="219" class="box-text" text-anchor="middle" dominant-baseline="middle">Product
+                Controller</text>
+
+            <rect x="415" y="248" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="265" class="box-text" text-anchor="middle" dominant-baseline="middle">Category
+                Controller</text>
+
+            <rect x="415" y="294" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="311" class="box-text" text-anchor="middle" dominant-baseline="middle">Cart
+                Controller</text>
+
+            <rect x="415" y="340" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="357" class="box-text" text-anchor="middle" dominant-baseline="middle" textLength="150"
+                lengthAdjust="spacingAndGlyphs">Session Cart Controller</text>
+
+            <rect x="415" y="386" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="403" class="box-text" text-anchor="middle" dominant-baseline="middle">Order
+                Controller</text>
+
+            <rect x="415" y="432" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="449" class="box-text" text-anchor="middle" dominant-baseline="middle" textLength="150"
+                lengthAdjust="spacingAndGlyphs">Admin Order Controller</text>
+
+            <rect x="415" y="478" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="495" class="box-text" text-anchor="middle" dominant-baseline="middle">Payment
+                Controller</text>
+
+            <rect x="415" y="524" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="541" class="box-text" text-anchor="middle" dominant-baseline="middle">Address
+                Controller</text>
+
+            <rect x="415" y="570" width="160" height="34" rx="6" fill="#64B5F6" stroke="#2196F3"
+                filter="url(#shadow)" />
+            <text x="495" y="587" class="box-text" text-anchor="middle" dominant-baseline="middle">Statistics
+                Controller</text>
+
+            <!-- Application Layer Boxes -->
+            <rect x="635" y="110" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="127" class="box-text" text-anchor="middle" dominant-baseline="middle">Authentication
+                Service</text>
+
+            <rect x="635" y="156" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="173" class="box-text" text-anchor="middle" dominant-baseline="middle">User Service</text>
+
+            <rect x="635" y="202" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="219" class="box-text" text-anchor="middle" dominant-baseline="middle">Product
+                Service</text>
+
+            <rect x="635" y="248" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="265" class="box-text" text-anchor="middle" dominant-baseline="middle">Category
+                Service</text>
+
+            <rect x="635" y="294" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="311" class="box-text" text-anchor="middle" dominant-baseline="middle">Database Cart
+                Service</text>
+
+            <rect x="635" y="340" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="357" class="box-text" text-anchor="middle" dominant-baseline="middle">Session Cart
+                Service</text>
+
+            <rect x="635" y="386" width="160" height="34" rx="6" fill="#66BB6A" stroke="#43A047"
+                filter="url(#shadow)" />
+            <text x="715" y="403" class="box-text" text-anchor="middle" dominant-baseline="middle">Order Service</text>
+
+            <rect x="635" y="432" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="449" class="box-text" text-anchor="middle" dominant-baseline="middle">VNPay Service
+                (Payment)</text>
+
+            <rect x="635" y="478" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="495" class="box-text" text-anchor="middle" dominant-baseline="middle">Address
+                Service</text>
+
+            <rect x="635" y="524" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="541" class="box-text" text-anchor="middle" dominant-baseline="middle">Statistics
+                Service</text>
+
+            <rect x="635" y="570" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="587" class="box-text" text-anchor="middle" dominant-baseline="middle">File Upload
+                Service</text>
+
+            <rect x="635" y="616" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="633" class="box-text" text-anchor="middle" dominant-baseline="middle" textLength="150"
+                lengthAdjust="spacingAndGlyphs">Inventory Service (ProductItem)</text>
+
+            <rect x="635" y="662" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="679" class="box-text" text-anchor="middle" dominant-baseline="middle">Jwt Service</text>
+
+            <rect x="635" y="708" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="725" class="box-text" text-anchor="middle" dominant-baseline="middle">UserDetail
+                Service</text>
+
+            <rect x="635" y="754" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="771" class="box-text" text-anchor="middle" dominant-baseline="middle">Notification
+                Service</text>
+
+            <rect x="635" y="800" width="160" height="34" rx="6" fill="#81C784" stroke="#4CAF50"
+                filter="url(#shadow)" />
+            <text x="715" y="817" class="box-text" text-anchor="middle" dominant-baseline="middle">Shipping
+                Service</text>
+
+            <!-- Domain Layer Boxes -->
+            <rect x="855" y="110" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="127" class="box-text" text-anchor="middle" dominant-baseline="middle">User Entity</text>
+
+            <rect x="855" y="156" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="173" class="box-text" text-anchor="middle" dominant-baseline="middle">Product Entity</text>
+
+            <rect x="855" y="202" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="219" class="box-text" text-anchor="middle" dominant-baseline="middle">ProductItem
+                Entity</text>
+
+            <rect x="855" y="248" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="265" class="box-text" text-anchor="middle" dominant-baseline="middle">Category
+                Entity</text>
+
+            <rect x="855" y="294" width="160" height="34" rx="6" fill="#FFA726" stroke="#F57C00"
+                filter="url(#shadow)" />
+            <text x="935" y="311" class="box-text" text-anchor="middle" dominant-baseline="middle">Cart Aggregate
+                (Cart)</text>
+
+            <rect x="855" y="340" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="357" class="box-text" text-anchor="middle" dominant-baseline="middle">CartItem (Value
+                Object)</text>
+
+            <rect x="855" y="386" width="160" height="34" rx="6" fill="#FFA726" stroke="#F57C00"
+                filter="url(#shadow)" />
+            <text x="935" y="403" class="box-text" text-anchor="middle" dominant-baseline="middle">Order Aggregate
+                (Order)</text>
+
+            <rect x="855" y="432" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="449" class="box-text" text-anchor="middle" dominant-baseline="middle">OrderItem (Value
+                Object)</text>
+
+            <rect x="855" y="478" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="495" class="box-text" text-anchor="middle" dominant-baseline="middle">Payment Entity</text>
+
+            <rect x="855" y="524" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="541" class="box-text" text-anchor="middle" dominant-baseline="middle">Address Entity</text>
+
+            <rect x="855" y="570" width="160" height="34" rx="6" fill="#FFB74D" stroke="#FF9800"
+                filter="url(#shadow)" />
+            <text x="935" y="587" class="box-text" text-anchor="middle" dominant-baseline="middle">RedisToken
+                Entity</text>
+
+            <rect x="855" y="616" width="160" height="110" rx="6" fill="#FF7043" stroke="#E64A19"
+                filter="url(#shadow)" />
+            <text x="935" y="640" class="box-text-white" text-anchor="middle">
+                <tspan x="935" dy="0">Domain Events:</tspan>
+                <tspan x="935" dy="14">OrderCreated, InventoryChecked</tspan>
+                <tspan x="935" dy="14">PaymentSucceeded, PaymentFailed</tspan>
+                <tspan x="935" dy="14">OrderConfirmed, OrderCancelled</tspan>
+                <tspan x="935" dy="14">UserRegistered</tspan>
+            </text>
+
+            <!-- Persistence Layer Boxes -->
+            <rect x="1075" y="156" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="173" class="box-text" text-anchor="middle" dominant-baseline="middle">User
+                Repository</text>
+
+            <rect x="1075" y="202" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="219" class="box-text" text-anchor="middle" dominant-baseline="middle">Product
+                Repository</text>
+
+            <rect x="1075" y="248" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="265" class="box-text" text-anchor="middle" dominant-baseline="middle">Category
+                Repository</text>
+
+            <rect x="1075" y="294" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="311" class="box-text" text-anchor="middle" dominant-baseline="middle">Cart
+                Repository</text>
+
+            <rect x="1075" y="340" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="357" class="box-text" text-anchor="middle" dominant-baseline="middle">CartItem
+                Repository</text>
+
+            <rect x="1075" y="386" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="403" class="box-text" text-anchor="middle" dominant-baseline="middle">Order
+                Repository</text>
+
+            <rect x="1075" y="432" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="449" class="box-text" text-anchor="middle" dominant-baseline="middle">Payment
+                Repository</text>
+
+            <rect x="1075" y="478" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="495" class="box-text" text-anchor="middle" dominant-baseline="middle">Address
+                Repository</text>
+
+            <rect x="1075" y="524" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="541" class="box-text" text-anchor="middle" dominant-baseline="middle">OrderItem
+                Repository</text>
+
+            <rect x="1075" y="616" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="633" class="box-text" text-anchor="middle" dominant-baseline="middle">ProductItem
+                Repository</text>
+
+            <rect x="1075" y="662" width="160" height="34" rx="6" fill="#BA68C8" stroke="#9C27B0"
+                filter="url(#shadow)" />
+            <text x="1155" y="679" class="box-text" text-anchor="middle" dominant-baseline="middle">RedisToken
+                Repository</text>
+
+            <!-- Infrastructure Layer Boxes -->
+            <rect x="1295" y="110" width="160" height="34" rx="6" fill="#4DB6AC" stroke="#009688"
+                filter="url(#shadow)" />
+            <text x="1375" y="127" class="box-text" text-anchor="middle" dominant-baseline="middle">Redis Token
+                Store</text>
+
+            <rect x="1295" y="340" width="160" height="34" rx="6" fill="#4DB6AC" stroke="#009688"
+                filter="url(#shadow)" />
+            <text x="1375" y="357" class="box-text" text-anchor="middle" dominant-baseline="middle">Redis Session
+                Store</text>
+
+            <rect x="1295" y="432" width="160" height="34" rx="6" fill="#4DB6AC" stroke="#009688"
+                filter="url(#shadow)" />
+            <text x="1375" y="449" class="box-text" text-anchor="middle" dominant-baseline="middle">VNPay Payment
+                API</text>
+
+            <rect x="1295" y="616" width="160" height="34" rx="6" fill="#4DB6AC" stroke="#009688"
+                filter="url(#shadow)" />
+            <text x="1375" y="633" class="box-text" text-anchor="middle" dominant-baseline="middle">RabbitMQ Event
+                Broker</text>
+
+            <!-- DB Column -->
+            <g filter="url(#shadow)">
+                <ellipse cx="1580" cy="200" rx="70" ry="12" fill="#CFD8DC" stroke="#607D8B" />
+                <rect x="1510" y="200" width="140" height="90" fill="#CFD8DC" stroke="#607D8B" />
+                <ellipse cx="1580" cy="290" rx="70" ry="12" fill="#CFD8DC" stroke="#607D8B" />
+                <text x="1580" y="235" class="box-text" text-anchor="middle">
+                    <tspan x="1580" dy="0">E-commerce DB</tspan>
+                    <tspan x="1580" dy="14">(MariaDB)</tspan>
+                </text>
+            </g>
+
+            <g filter="url(#shadow)">
+                <ellipse cx="1585" cy="540" rx="45" ry="10" fill="#CFD8DC" stroke="#607D8B" />
+                <rect x="1540" y="540" width="90" height="50" fill="#CFD8DC" stroke="#607D8B" />
+                <ellipse cx="1585" cy="590" rx="45" ry="10" fill="#CFD8DC" stroke="#607D8B" />
+                <text x="1585" y="565" class="box-text" text-anchor="middle">
+                    <tspan x="1585" dy="0">Session, Token</tspan>
+                    <tspan x="1585" dy="14">(Redis)</tspan>
+                </text>
+            </g>
+
+            <!-- Main Request Flow (Black) -->
+            <line x1="190" y1="250" x2="220" y2="250" stroke="#000000" stroke-width="1.4"
+                marker-end="url(#arrow-black)" />
+
+            <line x1="370" y1="127" x2="415" y2="127" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="173" x2="415" y2="173" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="219" x2="415" y2="219" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="265" x2="415" y2="265" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="311" x2="415" y2="311" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="357" x2="415" y2="357" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="403" x2="415" y2="403" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="449" x2="415" y2="449" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="495" x2="415" y2="495" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="541" x2="415" y2="541" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="370" y1="587" x2="415" y2="587" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+
+            <line x1="575" y1="127" x2="635" y2="127" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="173" x2="635" y2="173" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="219" x2="635" y2="219" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="265" x2="635" y2="265" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="311" x2="635" y2="311" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="357" x2="635" y2="357" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="403" x2="635" y2="403" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="449" x2="635" y2="403" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="495" x2="635" y2="449" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="541" x2="635" y2="495" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+            <line x1="575" y1="587" x2="635" y2="541" stroke="#000000" stroke-width="1.2"
+                marker-end="url(#arrow-black)" />
+
+            <!-- Repository Pattern (Purple) -->
+            <line x1="795" y1="173" x2="1075" y2="173" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="219" x2="1075" y2="219" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="265" x2="1075" y2="265" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="311" x2="1075" y2="311" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="357" x2="1075" y2="357" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="403" x2="1075" y2="403" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="449" x2="1075" y2="449" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="495" x2="1075" y2="495" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="541" x2="1075" y2="541" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="633" x2="1075" y2="633" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="795" y1="679" x2="1075" y2="679" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+
+            <line x1="1235" y1="173" x2="1510" y2="173" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="219" x2="1510" y2="219" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="265" x2="1510" y2="265" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="311" x2="1510" y2="311" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="357" x2="1510" y2="357" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="403" x2="1510" y2="403" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="449" x2="1510" y2="449" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="495" x2="1510" y2="495" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="541" x2="1510" y2="541" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="633" x2="1510" y2="633" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+            <line x1="1235" y1="679" x2="1540" y2="565" stroke="#9C27B0" stroke-width="1.3"
+                marker-end="url(#arrow-purple)" />
+
+            <!-- Cache (Blue) -->
+            <line x1="795" y1="357" x2="1295" y2="357" stroke="#2196F3" stroke-width="1.3"
+                marker-end="url(#arrow-blue)" />
+            <text x="1035" y="346" class="label-text" text-anchor="middle">Cache Cart</text>
+            <line x1="1455" y1="357" x2="1545" y2="555" stroke="#2196F3" stroke-width="1.3"
+                marker-end="url(#arrow-blue)" />
+
+            <!-- Token Store (Teal) -->
+            <line x1="795" y1="127" x2="1295" y2="127" stroke="#009688" stroke-width="1.3"
+                marker-end="url(#arrow-teal)" />
+            <text x="1035" y="116" class="label-text" text-anchor="middle">Token Store</text>
+            <line x1="1455" y1="127" x2="1545" y2="555" stroke="#009688" stroke-width="1.3"
+                marker-end="url(#arrow-teal)" />
+
+            <!-- Payment (Green) -->
+            <line x1="795" y1="449" x2="1295" y2="449" stroke="#4CAF50" stroke-width="1.3"
+                marker-end="url(#arrow-green)" />
+            <text x="1040" y="438" class="label-text" text-anchor="middle">Charge Payment</text>
+
+            <!-- Domain Events (Orange Dashed) -->
+            <path d="M795 403 L1040 403 L1040 633 L1295 633" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="955" y="393" class="label-text" text-anchor="middle">Publish OrderCreated, OrderConfirmed,
+                OrderCancelled</text>
+
+            <path d="M795 633 L1040 633 L1295 633" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="940" y="622" class="label-text" text-anchor="middle">Publish InventoryChecked</text>
+
+            <path d="M795 449 L1040 449 L1040 633 L1295 633" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="960" y="439" class="label-text" text-anchor="middle">Publish PaymentSucceeded, PaymentFailed</text>
+
+            <path d="M795 127 L1040 127 L1040 633 L1295 633" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="930" y="117" class="label-text" text-anchor="middle">Publish UserRegistered</text>
+
+            <path d="M1295 633 L1040 633 L795 633" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="1010" y="652" class="label-text" text-anchor="middle">Consume OrderCreated, OrderCancelled</text>
+
+            <path d="M1295 633 L1040 633 L1040 449 L795 449" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="1010" y="466" class="label-text" text-anchor="middle">Consume OrderCreated</text>
+
+            <path d="M1295 633 L1040 633 L1040 403 L795 403" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="1010" y="420" class="label-text" text-anchor="middle">Consume InventoryChecked, PaymentSucceeded,
+                PaymentFailed</text>
+
+            <path d="M1295 633 L1040 633 L1040 771 L795 771" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="1010" y="788" class="label-text" text-anchor="middle">Consume OrderCreated, PaymentSucceeded,
+                OrderConfirmed, OrderCancelled, UserRegistered</text>
+
+            <path d="M1295 633 L1040 633 L1040 817 L795 817" stroke="#FF9800" stroke-width="1.3" fill="none"
+                stroke-dasharray="6 4" marker-end="url(#arrow-orange)" />
+            <text x="1010" y="834" class="label-text" text-anchor="middle">Consume OrderConfirmed</text>
+        </svg>
+    </div>
+
+    <div class="footer">Fig 2. Layered Sample</div>
+</body>
+
+</html>
